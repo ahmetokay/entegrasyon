@@ -2,15 +2,15 @@
 # Build stage
 #
 FROM maven:3.6.0-jdk-11-slim AS build
-COPY src /src
+COPY src /home/app/src
 COPY pom.xml /home/app
-RUN mvn -f pom.xml clean package
+RUN mvn -f /home/app/pom.xml clean package
 #
 ##
 ## Package stage
 ##
 FROM openjdk:8-jre-alpine3.9
-COPY nvi-kimlik-dogrulama/target/nvi-kimlik-dogrulama-1.0-SNAPSHOT-spring-boot.jar /nvi-kimlik-dogrulama.jar
+COPY --from=build /home/app/target/nvi-kimlik-dogrulama-1.0-SNAPSHOT-spring-boot.jar /nvi-kimlik-dogrulama.jar
 EXPOSE 5555
 ENTRYPOINT ["java","-jar","/nvi-kimlik-dogrulama.jar"]
 
